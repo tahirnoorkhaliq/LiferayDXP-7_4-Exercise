@@ -44,17 +44,21 @@ public class BatchUserImportAPIApplication extends Application {
 	@Produces("text/plain")
 	public String ImportUsers() {		
 		InputStream is = BatchUserImportAPIApplication.class.getClassLoader().getResourceAsStream("userloadtest.json");
-		String jsonString = printInputStream(is);
+		String usersJson = printInputStream(is);
+		is = BatchUserImportAPIApplication.class.getClassLoader().getResourceAsStream("fieldNameMapping.json");
+		String fieldNameMapping= printInputStream(is);
+		System.out.println("Processing File"+usersJson+"\n fieldNameMapping "+fieldNameMapping);
 		ImportTaskResource.Builder builder = ImportTaskResource.builder();
-		ImportTaskResource importTaskResource = builder.authentication("test@liferay.com", "test").build();
+		ImportTaskResource importTaskResource = builder.authentication("test@liferay.com", "test").build();////.endpoint(host, port, scheme).builder.build();//
+		
 		try {
 			ImportTask response = importTaskResource.postImportTask(
-					String.valueOf("com.liferay.headless.admin.user.dto.v1_0.UserAccount"), null, null, null, null,
-					null, null, jsonString);
+					String.valueOf("com.liferay.headless.admin.user.dto.v1_0.UserAccount"), null, "INSERT", null, null,
+					"IMPORT_STRATEGY_ON_ERROR_CONTINUE", null, usersJson);
 			System.out.println(response);
 			return response.toString();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());			
 			e.printStackTrace();
 		}
 		return "Error";
