@@ -61,7 +61,7 @@ public class BatchUserImportAPIApplication extends Application {
 		String usersJson = printInputStream(is);
 		is = BatchUserImportAPIApplication.class.getClassLoader().getResourceAsStream("fieldNameMapping.json");
 		String fieldNameMapping = printInputStream(is);
-		System.out.println("Processing File" + usersJson + "\n fieldNameMapping " + fieldNameMapping);
+		System.out.println("Processing File" + usersJson + "\n ");
 		ImportTaskResource.Builder builder = ImportTaskResource.builder();
 		ImportTaskResource importTaskResource = builder.authentication("test@liferay.com", "test").build();//// .endpoint(host,
 																											//// port,

@@ -1,0 +1,12 @@
+dependencies {
+	compile project(":modules:batch-load-users:batch-load-users-api")
+
+	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+	compileInclude  group: "com.liferay", name: "com.liferay.headless.batch.engine.client", version: "1.0.14"
+}
+
+buildService {
+	apiDir = "../batch-load-users-api/src/main/java"
+}
+
+group = "com.tahir.batch.load.users"

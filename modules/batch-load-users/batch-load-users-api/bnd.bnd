@@ -1,0 +1,10 @@
+Bundle-Name: batch-load-users-api
+Bundle-SymbolicName: com.tahir.batch.load.users.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.tahir.batch.load.users.exception,\
+	com.tahir.batch.load.users.model,\
+	com.tahir.batch.load.users.service,\
+	com.tahir.batch.load.users.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../batch-load-users-service/service.xml
