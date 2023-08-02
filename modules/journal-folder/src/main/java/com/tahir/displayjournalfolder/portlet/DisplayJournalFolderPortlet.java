@@ -37,64 +37,46 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Muslim
  */
-@Component(
-	immediate = true,
-	property = {
-		"com.liferay.portlet.display-category=category.sample",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.instanceable=true",
-		"javax.portlet.display-name=DisplayJournalFolder",
-		"javax.portlet.init-param.template-path=/",
+@Component(immediate = true, property = { "com.liferay.portlet.display-category=category.sample",
+		"com.liferay.portlet.header-portlet-css=/css/main.css", "com.liferay.portlet.instanceable=true",
+		"javax.portlet.display-name=DisplayJournalFolder", "javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + DisplayJournalFolderPortletKeys.DISPLAYJOURNALFOLDER,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user",
-		"com.liferay.portlet.show-portlet-access-denied=false"
-	},
-	service = Portlet.class
-)
+		"javax.portlet.resource-bundle=content.Language", "javax.portlet.security-role-ref=power-user,user",
+		"com.liferay.portlet.show-portlet-access-denied=false" }, service = Portlet.class)
 public class DisplayJournalFolderPortlet extends MVCPortlet {
-	
+
 	@Reference
 	private TrashHelper _trashHelper;
-	
+
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
-		//AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider = (AssetDisplayPageFriendlyURLProvider)renderRequest.getAttribute(AssetDisplayPageFriendlyURLProvider.class.getName());
-		_httpServletRequest=PortalUtil.getHttpServletRequest(renderRequest);
-		ThemeDisplay _themeDisplay=(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		String s=getFoldersJSONArray(_themeDisplay).toString();
-		System.out.println(s);
-		
-		//JournalDisplayContext journalDisplayContext = JournalDisplayContext.create(_httpServletRequest, PortalUtil.getLiferayPortletRequest(renderRequest), PortalUtil.getLiferayPortletResponse(renderResponse), assetDisplayPageFriendlyURLProvider, _trashHelper);
-		renderRequest.setAttribute("data", s);
+		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
+		ThemeDisplay _themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		String foldersAndArticlesJson = getFoldersJSONArray(_themeDisplay).toString();
+		System.out.println(foldersAndArticlesJson);
+		renderRequest.setAttribute("data", foldersAndArticlesJson);
 		super.doView(renderRequest, renderResponse);
 	}
+
 	public JSONArray getFoldersJSONArray(ThemeDisplay _themeDisplay) {
-		return JSONUtil.put(
-			JSONUtil.put(
-				"children",
-				_getFoldersJSONArray(
-					_themeDisplay.getScopeGroupId(),
-					JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID)
-			));
+		return JSONUtil.put(JSONUtil.put("children", getFoldersJSONArrayRec(_themeDisplay.getScopeGroupId(),
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID)));
 	}
-	
-	private JSONArray _getFoldersJSONArray(long groupId, long folderId) {
+
+	private JSONArray getFoldersJSONArrayRec(long groupId, long folderId) {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		try {
-			List<Object> folders = journalFolderLocalService.getFoldersAndArticles(groupId, folderId);// getFolders(
-																										// groupId,
-																										// folderId);
+			List<Object> folders = journalFolderLocalService.getFoldersAndArticles(groupId, folderId);
 
 			for (Object folderOrArticle : folders) {
 
 				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 				if (folderOrArticle instanceof JournalFolder) {
 					JournalFolder curFolder = (JournalFolder) folderOrArticle;
-					JSONArray childrenJSONArray = _getFoldersJSONArray(groupId, curFolder.getFolderId());
+					JSONArray childrenJSONArray = getFoldersJSONArrayRec(groupId, curFolder.getFolderId());
 
 					if (childrenJSONArray.length() > 0) {
 						jsonObject.put("children", childrenJSONArray);
@@ -102,15 +84,15 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 					jsonObject.put("id", curFolder.getFolderId()).put("label", curFolder.getName());
 				} else {
 					JournalArticle article = (JournalArticle) folderOrArticle;
-					//String content = HtmlParserUtil.extractText(article.getContent());
-					JournalArticleDisplay jarticleDispaly = JournalArticleLocalServiceUtil.getArticleDisplay(
-		                    groupId, article.getArticleId(), "",
-		                    "en_US", null);
-		            if (Validator.isNotNull(jarticleDispaly)) {
-		            	System.out.println("Content: "+jarticleDispaly.getContent());
-		            
-		            jsonObject.put("id", article.getArticleId()).put("label", article.getTitle()).put("content", jarticleDispaly.getContent()).put("article", true);
-		            }		
+					// String content = HtmlParserUtil.extractText(article.getContent());
+					JournalArticleDisplay jarticleDispaly = JournalArticleLocalServiceUtil.getArticleDisplay(groupId,
+							article.getArticleId(), "", "en_US", null);
+					if (Validator.isNotNull(jarticleDispaly)) {
+						System.out.println("Content: " + jarticleDispaly.getContent());
+
+						jsonObject.put("id", article.getArticleId()).put("label", article.getTitle())
+								.put("content", "Title is "+article.getTitle()+" Content is "+jarticleDispaly.getContent()).put("article", true);
+					}
 				}
 
 				jsonArray.put(jsonObject);
@@ -123,54 +105,50 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 
 		return jsonArray;
 	}
-	
+
 	public long getParentFolderId() {
 		if (_parentFolderId != null) {
 			return _parentFolderId;
 		}
 
-		_parentFolderId = ParamUtil.getLong(
-			_httpServletRequest, "parentFolderId",
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+		_parentFolderId = ParamUtil.getLong(_httpServletRequest, "parentFolderId",
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		return _parentFolderId;
 	}
-	
 
 	public long getFolderId() {
 		if (_folderId != null) {
 			return _folderId;
 		}
 
-		_folderId = BeanParamUtil.getLong(
-			getFolder(), _httpServletRequest, "folderId",
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+		_folderId = BeanParamUtil.getLong(getFolder(), _httpServletRequest, "folderId",
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		return _folderId;
 	}
-	
+
 	public JournalFolder getFolder() {
 		if (_folder != null) {
 			return _folder;
 		}
 
-		_folder = (JournalFolder)_httpServletRequest.getAttribute(
-			WebKeys.JOURNAL_FOLDER);
+		_folder = (JournalFolder) _httpServletRequest.getAttribute(WebKeys.JOURNAL_FOLDER);
 
 		if (_folder != null) {
 			return _folder;
 		}
 
-		_folder = journalFolderLocalService.fetchFolder(
-			ParamUtil.getLong(_httpServletRequest, "folderId"));
+		_folder = journalFolderLocalService.fetchFolder(ParamUtil.getLong(_httpServletRequest, "folderId"));
 
 		return _folder;
 	}
+
 	private JournalFolder _folder;
 	private Long _parentFolderId;
 	private HttpServletRequest _httpServletRequest;
 	private Long _folderId;
-	
+
 	@Reference
 	JournalFolderLocalService journalFolderLocalService;
 	@Reference

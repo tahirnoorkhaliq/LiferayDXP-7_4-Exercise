@@ -44,8 +44,9 @@ ul, .myUL {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <portlet:resourceURL var="exportCSVResourceUrl" id="/journal/export/csv"/>
-<div class="row">
+<div class="d-flex justify-content-center">
 	<div class="col-sm-10">
+	<p>Journal Article Tree</p>
 		<div id="myTreeView"></div>
 	</div>
 	<div class="col-sm-2">
@@ -101,6 +102,7 @@ function createTreeView(node, data,classnm) {
 		});
 	  var ids=[];
 	  $('input[name*=node-checkbox]').change(function() {
+		   ids=[];
 	        console.log(this.checked); 
 	        if(this.checked) {
 	        	//ids.push($(this).val());
