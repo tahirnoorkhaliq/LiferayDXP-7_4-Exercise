@@ -1,0 +1,30 @@
+Bundle-Name: journal-folder
+Bundle-SymbolicName: com.tahir.displayjournalfolder
+Bundle-Version: 1.0.0
+Export-Package: com.tahir.displayjournalfolder.constants
+-includeresource: \
+META-INF/lib/poi-4.1.2.jar=poi-4.1.2.jar;lib:=true,\
+META-INF/lib/poi-ooxml-4.1.2.jar=poi-ooxml-4.1.2.jar;lib:=true
+Import-Package: \
+!com.graphbuilder.*,\
+!com.github.luben.zstd.*,\
+!com.github.luben.zstd.*,\
+!com.microsoft.schemas.*,\
+!net.sf.saxon.*,\
+!org.apache.batik.*,\
+!org.apache.jcp.xml.dsig.internal.*,\
+!org.bouncycastle.asn1.*,\
+!org.bouncycastle.*,\
+!org.bouncycastle.cms.*,\
+!org.brotli.dec.*,\
+!org.etsi.uri.*,\
+!org.openxmlformats.schemas.*,\
+!org.tukaani.xz.*,\
+!com.zaxxer.sparsebits.*,\
+!org.apache.commons.codec.*,\
+!org.apache.commons.collections4.*,\
+!org.apache.commons.compress.*,\
+!org.apache.xmlbeans.*,\
+!org.w3.x2000.*,\
+\
+*
