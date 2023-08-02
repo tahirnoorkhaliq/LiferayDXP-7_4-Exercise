@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.tahir.displayjournalfolder.constants.DisplayJournalFolderPortletKeys;
@@ -78,9 +79,11 @@ public class JournalCSVExportActionCommand extends BaseMVCResourceCommand {
 			String[] tree = ja.getTreePath().split("/");
 			StringBuilder sb=new StringBuilder();
 			for (String folderId : tree) {
-				JournalFolder folder = journalFolderLocalService.getFolder(Integer.parseInt(folderId));
-				sb.append(folder.getName());
-				sb.append("/");
+				if (folderId.length() > 0 ) {
+					JournalFolder folder = journalFolderLocalService.getFolder(Integer.parseInt(folderId));
+					sb.append(folder.getName());
+					sb.append("/");
+				}
 			}
 			row.createCell(1).setCellValue(sb.toString());
 			JournalArticleDisplay jarticleDispaly = JournalArticleLocalServiceUtil
