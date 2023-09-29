@@ -20,7 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 
 /**
- * @author Tahir
+ * @author Tahir Noor Khaliq
  */
 @Component(
 	property = {

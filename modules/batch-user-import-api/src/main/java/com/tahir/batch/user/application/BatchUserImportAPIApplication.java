@@ -34,7 +34,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 
 /**
- * @author Tahir
+ * @author Tahir Noor Khaliq
  */
 @Component(property = { JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/batch-user",
 		JaxrsWhiteboardConstants.JAX_RS_NAME + "=UserImport.Rest" }, service = Application.class)

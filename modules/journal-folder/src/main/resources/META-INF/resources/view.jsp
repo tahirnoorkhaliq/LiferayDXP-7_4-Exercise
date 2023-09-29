@@ -50,7 +50,7 @@ ul, .myUL {
 		<div id="myTreeView"></div>
 	</div>
 	<div class="col-sm-2">
-		<button class="export-csv" >Export</button>
+		<button class="export-csv" disabled>Export</button>
 	</div>
 </div>
 
@@ -116,6 +116,11 @@ function createTreeView(node, data,classnm) {
 	        });
 	        }else{
 	        	 $(this).closest('li').find('ul input[name*=node-checkbox]').prop('checked', false);
+	        }
+	        if($('.myUL input[type=checkbox]:checked').length >0){
+	        	$('.export-csv').removeAttr('disabled');
+	        }else{
+	        	$('.export-csv').attr('disabled','disabled')
 	        }
 	    });
 	  

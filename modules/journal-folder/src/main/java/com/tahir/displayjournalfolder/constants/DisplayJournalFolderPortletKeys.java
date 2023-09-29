@@ -1,7 +1,7 @@
 package com.tahir.displayjournalfolder.constants;
 
 /**
- * @author Muslim
+ * @author Tahir Noor Khaliq
  */
 public class DisplayJournalFolderPortletKeys {
 
