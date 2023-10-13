@@ -71,8 +71,9 @@ function createTreeView(node, data,classnm) {
 	   
 	    if(item.article){
 	    	const label= $('<label>').text(item.content);
+	    	const uri=$('<a >').text("Edit Article").attr('href',item.uri)
 	    	 const checkbox = $('<input type="checkbox">').attr('name', 'node-checkbox').attr('class', 'ckb-node').attr('article', item.article).val(item.id);
-	 	    li.append(checkbox, label);
+	 	    li.append(checkbox, label,uri);
 	    }else{
 	    	const label= $('<label>').text(item.label);
 	    	 const checkbox = $('<input type="checkbox">').attr('name', 'node-checkbox').attr('class', 'ckb-node').attr('article', item.article).val(item.id);

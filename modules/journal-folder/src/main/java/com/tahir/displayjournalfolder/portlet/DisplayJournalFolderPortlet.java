@@ -1,5 +1,8 @@
 package com.tahir.displayjournalfolder.portlet;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetRenderer;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.model.JournalFolder;
@@ -13,6 +16,9 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.WindowStateFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -27,6 +33,7 @@ import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -54,18 +61,19 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 			throws IOException, PortletException {
 		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
 		ThemeDisplay _themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		String foldersAndArticlesJson = getFoldersJSONArray(_themeDisplay).toString();
+		String foldersAndArticlesJson = getFoldersJSONArray(_themeDisplay,renderRequest, renderResponse).toString();
+		System.out.println("==========================");
 		System.out.println(foldersAndArticlesJson);
 		renderRequest.setAttribute("data", foldersAndArticlesJson);
 		super.doView(renderRequest, renderResponse);
 	}
 
-	public JSONArray getFoldersJSONArray(ThemeDisplay _themeDisplay) {
+	public JSONArray getFoldersJSONArray(ThemeDisplay _themeDisplay,RenderRequest renderRequest,RenderResponse renderResponse) {
 		return JSONUtil.put(JSONUtil.put("children", getFoldersJSONArrayRec(_themeDisplay.getScopeGroupId(),
-				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID)));
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, renderRequest, renderResponse)));
 	}
 
-	private JSONArray getFoldersJSONArrayRec(long groupId, long folderId) {
+	private JSONArray getFoldersJSONArrayRec(long groupId, long folderId,RenderRequest renderRequest,RenderResponse renderResponse) {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		try {
@@ -76,22 +84,39 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 				if (folderOrArticle instanceof JournalFolder) {
 					JournalFolder curFolder = (JournalFolder) folderOrArticle;
-					JSONArray childrenJSONArray = getFoldersJSONArrayRec(groupId, curFolder.getFolderId());
+					JSONArray childrenJSONArray = getFoldersJSONArrayRec(groupId, curFolder.getFolderId(), renderRequest, renderResponse);
 
 					if (childrenJSONArray.length() > 0) {
 						jsonObject.put("children", childrenJSONArray);
 					}
+					
 					jsonObject.put("id", curFolder.getFolderId()).put("label", curFolder.getName());
 				} else {
 					JournalArticle article = (JournalArticle) folderOrArticle;
 					// String content = HtmlParserUtil.extractText(article.getContent());
+					long rpk = article.getResourcePrimKey();
+					AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry("com.liferay.journal.model.JournalArticle",rpk);
+					AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
+					PortletURL redirectURL =  renderResponse.createRenderURL();
+					PortletURL editPortletURL = null;
+					try {
+						 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
+								WindowStateFactory.getWindowState("pop_up"),redirectURL);
+						System.out.println("editPortletURL : "+editPortletURL);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
 					JournalArticleDisplay jarticleDispaly = JournalArticleLocalServiceUtil.getArticleDisplay(groupId,
 							article.getArticleId(), "", "en_US", null);
 					if (Validator.isNotNull(jarticleDispaly)) {
 						System.out.println("Content: " + jarticleDispaly.getContent());
-
+						
+						System.out.println("URl===="+jarticleDispaly.getUrlTitle());
 						jsonObject.put("id", article.getArticleId()).put("label", article.getTitle())
-								.put("content", "Title is "+article.getTitle()+" Content is "+jarticleDispaly.getContent()).put("article", true);
+								.put("content", "Title is "+article.getTitle()+" Content is "+jarticleDispaly.getContent().trim()).put("article", true).put("uri",editPortletURL);
 					}
 				}
 
