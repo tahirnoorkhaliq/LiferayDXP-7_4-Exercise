@@ -1,3 +1,12 @@
+<%@page import="com.liferay.portal.kernel.portlet.LiferayPortletResponse"%>
+<%@page import="com.liferay.portal.kernel.portlet.LiferayPortletRequest"%>
+<%@page import="com.liferay.portal.kernel.portlet.WindowStateFactory"%>
+<%@page import="javax.portlet.PortletURL"%>
+<%@page import="com.liferay.asset.kernel.model.AssetRenderer"%>
+<%@page import="com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil"%>
+<%@page import="com.liferay.asset.kernel.model.AssetEntry"%>
+<%@page import="com.liferay.journal.model.JournalArticle"%>
+<%@page import="com.liferay.journal.service.JournalArticleLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.tahir.displayjournalfolder.constants.MenuItem"%>
@@ -44,6 +53,30 @@ ul, .myUL {
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <portlet:resourceURL var="exportCSVResourceUrl" id="/journal/export/csv"/>
+<%
+List<JournalArticle> ja = JournalArticleLocalServiceUtil.getArticles();
+for (JournalArticle article : ja) {
+	System.out.println("Title: "+article.getTitle());
+	long rpk = article.getResourcePrimKey();
+	AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry("com.liferay.journal.model.JournalArticle",rpk);
+	AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
+	PortletURL redirectURL =  renderResponse.createRenderURL();
+	PortletURL editPortletURL = null;
+	try {
+		 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
+				WindowStateFactory.getWindowState("pop_up"),redirectURL);
+		System.out.println("editPortletURL Tahirrr: "+editPortletURL);
+		%>
+		<a href="<%=editPortletURL%>"><%=article.getTitle() %></a>
+		<%
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+}
+
+%>
 <div class="d-flex justify-content-center">
 	<div class="col-sm-10">
 	<p>Journal Article Tree</p>

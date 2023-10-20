@@ -62,6 +62,11 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
 		ThemeDisplay _themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		String foldersAndArticlesJson = getFoldersJSONArray(_themeDisplay,renderRequest, renderResponse).toString();
+		List<JournalArticle> ja = journalArticleLocalService.getArticles();
+		for (JournalArticle journalArticle : ja) {
+			System.out.println("Title: "+journalArticle.getTitle());
+			
+		}
 		System.out.println("==========================");
 		System.out.println(foldersAndArticlesJson);
 		renderRequest.setAttribute("data", foldersAndArticlesJson);
