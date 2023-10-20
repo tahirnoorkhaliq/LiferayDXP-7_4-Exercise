@@ -64,7 +64,7 @@ for (JournalArticle article : ja) {
 	PortletURL editPortletURL = null;
 	try {
 		 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
-				WindowStateFactory.getWindowState("pop_up"),redirectURL);
+				WindowStateFactory.getWindowState("maximized"),redirectURL);
 		System.out.println("editPortletURL Tahirrr: "+editPortletURL);
 		%>
 		<a href="<%=editPortletURL%>"><%=article.getTitle() %></a>

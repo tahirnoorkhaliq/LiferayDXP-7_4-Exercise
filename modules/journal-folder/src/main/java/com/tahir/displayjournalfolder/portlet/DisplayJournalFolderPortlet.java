@@ -106,7 +106,7 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 					PortletURL editPortletURL = null;
 					try {
 						 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
-								WindowStateFactory.getWindowState("pop_up"),redirectURL);
+								WindowStateFactory.getWindowState("maximized"),redirectURL);
 						System.out.println("editPortletURL : "+editPortletURL);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
