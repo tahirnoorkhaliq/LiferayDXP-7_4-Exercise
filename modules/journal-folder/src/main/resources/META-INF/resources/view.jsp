@@ -1,3 +1,5 @@
+<%@page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil"%>
+<%@page import="com.liferay.portal.kernel.util.PortalUtil"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletResponse"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletRequest"%>
 <%@page import="com.liferay.portal.kernel.portlet.WindowStateFactory"%>
@@ -64,7 +66,7 @@ for (JournalArticle article : ja) {
 	PortletURL editPortletURL = null;
 	try {
 		 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
-				WindowStateFactory.getWindowState("maximized"),redirectURL);
+				WindowStateFactory.getWindowState("maximized"),PortalUtil.getPortalURL(themeDisplay)+"/group"+GroupLocalServiceUtil.getGroup(themeDisplay.getScopeGroupId()).getFriendlyURL()+"/~/control_panel/manage?p_p_id=com_liferay_journal_web_portlet_JournalPortlet");
 		System.out.println("editPortletURL Tahirrr: "+editPortletURL);
 		%>
 		<a href="<%=editPortletURL%>"><%=article.getTitle() %></a>

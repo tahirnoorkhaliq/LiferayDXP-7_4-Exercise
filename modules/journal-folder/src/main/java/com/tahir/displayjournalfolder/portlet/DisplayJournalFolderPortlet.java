@@ -67,7 +67,7 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 			System.out.println("Title: "+journalArticle.getTitle());
 			
 		}
-		System.out.println("==========================");
+		
 		System.out.println(foldersAndArticlesJson);
 		renderRequest.setAttribute("data", foldersAndArticlesJson);
 		super.doView(renderRequest, renderResponse);
@@ -103,6 +103,7 @@ public class DisplayJournalFolderPortlet extends MVCPortlet {
 					AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry("com.liferay.journal.model.JournalArticle",rpk);
 					AssetRenderer<?> assetRenderer = assetEntry.getAssetRenderer();
 					PortletURL redirectURL =  renderResponse.createRenderURL();
+					
 					PortletURL editPortletURL = null;
 					try {
 						 editPortletURL = assetRenderer.getURLEdit((LiferayPortletRequest) renderRequest,(LiferayPortletResponse) renderResponse,
